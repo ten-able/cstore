@@ -2,14 +2,14 @@
 
 -- DROP DATABASE desicart;
 
--- CREATE DATABASE desicart
---     WITH 
---     OWNER = anthaledhu
---     ENCODING = 'UTF8'
---     LC_COLLATE = 'en_US.UTF-8'
---     LC_CTYPE = 'en_US.UTF-8'
---     TABLESPACE = pg_default
---     CONNECTION LIMIT = -1;
+CREATE DATABASE desicart
+    WITH 
+    OWNER = anthaledhu
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'en_US.UTF-8'
+    LC_CTYPE = 'en_US.UTF-8'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
 	
 	CREATE SCHEMA IF NOT EXISTS cstore;
 	
@@ -27,7 +27,8 @@
 		created_by varchar(250),
 		created_on timestamp,
 		updated_by varchar(250),
-		updated_on timestamp
+		updated_on timestamp,
+		status varchar(50)
 	);
 	
 	create table cstore.a_user (
@@ -82,7 +83,7 @@
 		product_name varchar(250) NOT NULL,
 		ptype varchar(200) NOT NULL,
 		description varchar,
-		price integer NOT NULL,
+		price numeric,
 		icon_url varchar,
 		image_url varchar,
 		quantity_available integer,
@@ -96,6 +97,7 @@
 		quantity_available integer,
 		status VARCHAR(50),
 		created_by varchar(250),
+		price numeric,
 		created_on timestamp,
 		updated_by varchar(250),
 		updated_on timestamp,
@@ -122,7 +124,7 @@
 		cust_id integer NOT NULL,
 		order_created_date TIMESTAMP NOT NULL,
 		order_status_updated_date TIMESTAMP NOT NULL,
-		order_total float DEFAULT 0 NOT NULL,
+		order_total numeric,
 		order_status varchar(50),
 		cust_notes VARCHAR(250),
 		CONSTRAINT order_cust_cust_id_fkey  FOREIGN KEY (cust_id)
@@ -138,6 +140,7 @@
 		order_id integer NOT NULL,
 		store_product_id integer NOT NULL,
 		quantity integer DEFAULT 0,
+		item_price numeric,
 		created_on  TIMESTAMP,
 		PRIMARY KEY (order_id, store_product_id),
 		CONSTRAINT order_store_product_stp_id_fkey  FOREIGN KEY (store_product_id)
@@ -155,6 +158,7 @@
 		cust_id integer NOT NULL,
 		store_id integer NOT NULL,
 		created_on TIMESTAMP,
+		total numeric,
 		status VARCHAR(50),
 		CONSTRAINT store_cart_user_id_fkey FOREIGN KEY (cust_id)
 			REFERENCES cstore.customer(cust_id) MATCH SIMPLE
@@ -169,6 +173,7 @@
 		store_product_id integer not null,
 		quantity integer DEFAULT 0,
 		created_on timestamp,
+		item_price numeric,
 		constraint cart_items_cart_id_fkey foreign key (cart_id)
 			REFERENCES cstore.store_cart(cart_id) MATCH SIMPLE
 			ON UPDATE NO ACTION ON DELETE NO ACTION,
@@ -178,7 +183,7 @@
 	);
 	
 	create table cstore.payment_type (
-		paytype_id serial primary key,
+		pay_type_id serial primary key,
 		vendor_name varchar,
 		vendor_key varchar,
 		vendor_id varchar,
@@ -189,12 +194,13 @@
 	create table cstore.customer_payment (
 		payment_id serial primary key,
 		vendor_txn_id varchar,
-		paytype_id integer not null,
+		pay_intent_id varchar,
+		pay_type_id integer not null,
 		order_id integer not null,
-		amount decimal,
+		amount numeric,
 		status varchar,
-		constraint customer_payment_paytype_id_fkey foreign key (paytype_id)
-			REFERENCES cstore.payment_type(paytype_id) MATCH SIMPLE
+		constraint customer_payment_pay_type_id_fkey foreign key (pay_type_id)
+			REFERENCES cstore.payment_type(pay_type_id) MATCH SIMPLE
 			ON UPDATE NO ACTION ON DELETE NO ACTION
 	);
 
