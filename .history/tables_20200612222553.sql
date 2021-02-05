@@ -109,17 +109,13 @@ CREATE DATABASE desicart
 			ON UPDATE NO ACTION ON DELETE NO ACTION
 	);
 	
-	CREATE TABLE cstore.customer
-	(
-		cust_id integer NOT NULL DEFAULT nextval('cstore.customer_cust_id_seq'::regclass),
-		cust_uname character varying(50) COLLATE pg_catalog."default" NOT NULL,
-		cust_pwd character varying(50) COLLATE pg_catalog."default" NOT NULL,
-		cust_email character varying(355) COLLATE pg_catalog."default" NOT NULL,
-		created_on timestamp without time zone NOT NULL,
-		last_login timestamp without time zone,
-		CONSTRAINT customer_pkey PRIMARY KEY (cust_id),
-		CONSTRAINT customer_cust_email_key UNIQUE (cust_email),
-		CONSTRAINT customer_cust_uname_key UNIQUE (cust_uname)
+	create table cstore.customer (
+		cust_id serial primary key,
+		cust_uname VARCHAR (50) UNIQUE NOT NULL,
+	    cust_pwd VARCHAR (50) NOT NULL,
+	    cust_email VARCHAR (355) UNIQUE NOT NULL,
+	    created_on TIMESTAMP NOT NULL,
+	    last_login TIMESTAMP
 	);
 	
 	create table cstore.a_order (
